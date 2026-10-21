@@ -10,22 +10,38 @@
   const COL_IN = "#087a4e";
   const COL_OUT = "#1565c0";
   const LAST = 6;
+  // Outside air pressure does not change, so outside arrows stay this length.
+  const OUT_LEN = 42;
+  const COLS = 8;
+  const ROWS = 6;
+  const MOL_COUNT = COLS * ROWS;
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const $ = (id) => document.getElementById(id);
 
+  function rowIndices(row) {
+    const list = [];
+    for (let c = 0; c < COLS; c += 1) list.push(row * COLS + c);
+    return list;
+  }
+
   function removedMask(list) {
-    const mask = Array(16).fill(1);
+    const mask = Array(MOL_COUNT).fill(1);
     list.forEach((i) => {
       mask[i] = 0;
     });
     return mask;
   }
 
-  const MASK_ALL = Array(16).fill(1);
-  const MASK_10 = removedMask([0, 1, 2, 3, 5, 6]);
-  const MASK_4 = removedMask([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  const MASK_ALL = Array(MOL_COUNT).fill(1);
+  const MASK_SIP1 = removedMask([...rowIndices(0), ...rowIndices(1)]);
+  const MASK_SIP2 = removedMask([
+    ...rowIndices(0),
+    ...rowIndices(1),
+    ...rowIndices(2),
+    ...rowIndices(3),
+  ]);
 
   const STEPS = [
     {
@@ -45,14 +61,14 @@
     },
     {
       title: "兩邊差不多大",
-      caption: "箭嘴表示邊度推牆。綠色向外、藍色向內，兩邊差不多大，所以一樣長。",
+      caption: "箭嘴表示邊度推牆。綠色向外、藍色向內，兩邊差不多大，所以氣壓相同。",
       legend: "綠色箭嘴：盒內向外推。藍色箭嘴：盒外向內推。",
-      meter: "兩邊差不多大。",
+      meter: "兩邊氣壓相同。",
       next: "吸一下",
       mask: MASK_ALL,
       juice: 0,
-      arrowIn: 42,
-      arrowOut: 42,
+      arrowIn: OUT_LEN,
+      arrowOut: OUT_LEN,
       arrows: 1,
       extras: 0,
       crush: 0,
@@ -64,10 +80,10 @@
       legend: "綠色箭嘴：盒內向外推。藍色箭嘴：盒外向內推。",
       meter: "分子少咗，盒內氣壓開始降。",
       next: "再吸一下",
-      mask: MASK_10,
+      mask: MASK_SIP1,
       juice: 1,
-      arrowIn: 36,
-      arrowOut: 48,
+      arrowIn: 34,
+      arrowOut: OUT_LEN,
       arrows: 1,
       extras: 0,
       crush: 0,
@@ -79,10 +95,10 @@
       legend: "綠色箭嘴：盒內向外推。藍色箭嘴：盒外向內推。",
       meter: "盒內低，盒外仍然高。",
       next: "下一步",
-      mask: MASK_4,
+      mask: MASK_SIP2,
       juice: 2,
       arrowIn: 16,
-      arrowOut: 74,
+      arrowOut: OUT_LEN,
       arrows: 1,
       extras: 0,
       crush: 0,
@@ -90,14 +106,14 @@
     },
     {
       title: "認識大氣壓力",
-      caption: "盒外由四面八方向內推嘅力，叫做大氣壓力。大氣壓力冇變細，係盒入面嘅氣壓細咗。",
+      caption: "盒外由四面八方向內推嘅力，叫做大氣壓力。大氣壓力冇變大／增加，係盒入面嘅氣壓細咗。",
       legend: "藍色箭嘴：大氣壓力，向紙盒內推。綠色箭嘴：盒內向外推。",
       meter: "盒外嘅力叫做大氣壓力。",
       next: "下一步",
-      mask: MASK_4,
+      mask: MASK_SIP2,
       juice: 2,
-      arrowIn: 14,
-      arrowOut: 82,
+      arrowIn: 16,
+      arrowOut: OUT_LEN,
       arrows: 1,
       extras: 1,
       crush: 0,
@@ -109,10 +125,10 @@
       legend: "藍色箭嘴：大氣壓力，向紙盒內推。綠色箭嘴：盒內向外推。",
       meter: "大氣壓力向內推。",
       next: "下一步",
-      mask: MASK_4,
+      mask: MASK_SIP2,
       juice: 2,
-      arrowIn: 14,
-      arrowOut: 82,
+      arrowIn: 16,
+      arrowOut: OUT_LEN,
       arrows: 1,
       extras: 1,
       crush: 1,
@@ -124,10 +140,10 @@
       legend: "藍色箭嘴：大氣壓力，向紙盒內推。綠色箭嘴：盒內向外推。",
       meter: "壓力差把紙盒壓凹。",
       next: "再睇一次",
-      mask: MASK_4,
+      mask: MASK_SIP2,
       juice: 2,
-      arrowIn: 14,
-      arrowOut: 82,
+      arrowIn: 16,
+      arrowOut: OUT_LEN,
       arrows: 1,
       extras: 1,
       crush: 1,
@@ -218,16 +234,19 @@
   }
 
   function slotsFor(g) {
-    const xs = [0, 1, 2, 3].map((c) => g.l + 128 + c * 50);
-    const ys = [0, 1, 2, 3].map((r) => g.t + 44 + r * 34);
+    // Spread molecules across the whole headspace above the starting juice line.
+    const airTop = g.t + 26;
+    const airBottom = g.t + (g.b - g.t) * JUICE_RATIO[0] - 22;
     const slots = [];
-    for (let r = 0; r < 4; r += 1) {
-      const f = (ys[r] - g.t) / (g.b - g.t);
+    for (let r = 0; r < ROWS; r += 1) {
+      const y = airTop + ((airBottom - airTop) * r) / (ROWS - 1);
+      const f = (y - g.t) / (g.b - g.t);
       const inset = sideInset(f, g.bow);
-      for (let c = 0; c < 4; c += 1) {
-        const minX = g.l + 26 + inset;
-        const maxX = g.r - 26 - inset;
-        slots.push({ x: Math.min(maxX, Math.max(minX, xs[c])), y: ys[r] });
+      const minX = g.l + 22 + inset;
+      const maxX = g.r - 22 - inset;
+      for (let c = 0; c < COLS; c += 1) {
+        const x = minX + ((maxX - minX) * c) / (COLS - 1);
+        slots.push({ x, y });
       }
     }
     return slots;
@@ -383,7 +402,7 @@
     const inn = view.arrowIn;
     const out = view.arrowOut;
     const wIn = inn < 22 ? 5.5 : 8;
-    const wOut = out > 60 ? 12 : 8;
+    const wOut = 8;
     const topX = g.l + 34;
     const topY = g.t + 1;
 
@@ -405,8 +424,8 @@
       [640, 340],
     ];
     const extras = extraSeeds.map(([x, y]) => {
-      const a = arrowToward(x, y, g, 78);
-      return { ...a, color: COL_OUT, w: 10, op: view.extras };
+      const a = arrowToward(x, y, g, OUT_LEN);
+      return { ...a, color: COL_OUT, w: wOut, op: view.extras };
     });
 
     mains.concat(extras).forEach((spec, i) => setArrow(arrowNodes[i], spec));
@@ -426,9 +445,9 @@
     );
     placeTag($("tag-dent"), leftDent - 18, fDent + 28, view.crush > 0.55, "end");
 
-    const showMol = current === 0 && molecules[3];
+    const showMol = current === 0 && molecules[COLS - 1];
     if (showMol) {
-      const tip = slots[3];
+      const tip = slots[COLS - 1];
       placeTag($("tag-mol"), VB_W - 18, tip.y + 6, true, "end");
       sceneEls.leader.setAttribute("opacity", "1");
       sceneEls.leader.setAttribute("x1", tip.x + 14);
@@ -481,7 +500,7 @@
       return;
     }
     const blue = current >= 4 ? "藍色向內推，就係大氣壓力" : "藍色向內推（盒外）";
-    const same = current === 1 ? '<span class="same-note">而家一樣長</span>' : "";
+    const same = current === 1 ? '<span class="same-note">而家氣壓相同</span>' : "";
     el.innerHTML =
       `<span class="key-item"><i class="swatch in"></i>綠色向外推（盒內）</span>` +
       `<span class="key-item"><i class="swatch out"></i>${blue}</span>` +
@@ -663,7 +682,7 @@
     });
     floatDelta(list.length);
     const juiceAnim = animateStraw(token);
-    await Promise.all(list.map((m, idx) => flyOne(m, pts, idx * 90, token)));
+    await Promise.all(list.map((m, idx) => flyOne(m, pts, idx * 55, token)));
     await juiceAnim;
   }
 
@@ -717,9 +736,9 @@
   }
 
   function bootMolecules() {
-    for (let i = 0; i < 16; i += 1) {
+    for (let i = 0; i < MOL_COUNT; i += 1) {
       const node = svgEl("circle", {
-        r: 8.5,
+        r: 7.2,
         fill: "#f7fcff",
         stroke: "#1d6ea5",
         "stroke-width": 2.6,
@@ -729,7 +748,7 @@
       molecules.push({ i, x: 0, y: 0, opacity: 1, present: true, flying: false, el: node });
     }
     const bank = $("dotbank");
-    for (let i = 0; i < 16; i += 1) {
+    for (let i = 0; i < MOL_COUNT; i += 1) {
       const dot = document.createElement("span");
       dot.className = "mini on";
       bank.appendChild(dot);
