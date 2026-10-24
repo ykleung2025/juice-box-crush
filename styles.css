@@ -168,6 +168,7 @@ body {
 .tag.dir-in { border: 2px solid var(--blue); color: var(--blue); background: #f3f7ff; }
 .tag.same { border: 2px solid #0c6b52; background: #e7f6ef; }
 .tag.dent { border: 2px solid #c2410c; color: #9a3412; background: #fff4e8; }
+.tag.gap { border: 2px solid #1565c0; color: #0d47a1; background: #e8f3ff; }
 
 .side { display: grid; gap: 12px; align-content: start; }
 
@@ -206,6 +207,7 @@ body {
 
 .mini.on { background: #1d6ea5; border-color: #1d6ea5; }
 .mini.leaving { background: #ffb703; border-color: #e09a00; }
+.mini.entering { background: #34a853; border-color: #1e7a3a; }
 .mini.off { background: transparent; }
 
 .meter-row {
@@ -448,6 +450,8 @@ body {
   animation: floatUp 1s ease forwards;
   pointer-events: none;
 }
+
+.floater.in { color: var(--green-d); }
 
 .sr-only {
   position: absolute;

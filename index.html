@@ -6,7 +6,7 @@
   <title>點解果汁盒會凹入去？｜大氣壓力</title>
   <meta name="description" content="逐步動畫：吸管吸走密封果汁盒入面嘅空氣分子，盒內氣壓下降，外面大氣壓力把紙盒壓凹。">
   <link rel="icon" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <div class="page">
@@ -22,7 +22,7 @@
     <div class="layout">
       <section class="stage-card" aria-label="示範畫面">
         <div class="step-row">
-          <p class="step-badge" id="step-badge">第 1 步 / 共 7 步</p>
+          <p class="step-badge" id="step-badge">第 1 步 / 共 8 步</p>
         </div>
         <p class="atmo-banner" id="atmo-banner" hidden>
           <strong>大氣壓力</strong>
@@ -89,6 +89,12 @@
             <path id="strawEdge" fill="none" stroke="#d5e2ea" stroke-width="22" stroke-linecap="round" opacity="0"/>
             <path id="strawJuice" fill="none" stroke="#ff9f1c" stroke-width="12" stroke-linecap="round" opacity="0"/>
 
+            <g id="gap-visual" opacity="0">
+              <ellipse id="gapRim" cx="356" cy="122" rx="18" ry="11" fill="none" stroke="#c9843a" stroke-width="3.5"/>
+              <ellipse id="gapHole" cx="356" cy="122" rx="12" ry="7.5" fill="#8ec5e0" stroke="#1565c0" stroke-width="2"/>
+              <g id="gap-arrows"></g>
+            </g>
+
             <g id="molecules"></g>
             <g id="arrows"></g>
             <line id="leader" stroke="#1d6ea5" stroke-width="3" stroke-linecap="round" opacity="0"/>
@@ -102,6 +108,7 @@
             <p class="tag dir-in" id="tag-dir-in" hidden>向內</p>
             <p class="tag same" id="tag-same" hidden>氣壓相同</p>
             <p class="tag dent" id="tag-dent" hidden>凹入</p>
+            <p class="tag gap" id="tag-gap" hidden>縫隙／入氣口</p>
           </div>
         </div>
       </section>
@@ -153,7 +160,7 @@
             <path d="M30 18h12" fill="none" stroke="#0d47a1" stroke-width="2.4" stroke-linecap="round"/>
             <path d="M36 13l7 5-7 5" fill="none" stroke="#0d47a1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          如果空氣可以即時補充，盒內氣壓唔會下降，紙盒就唔會凹。
+          如果飲管同紙盒之間縫隙好大，或者有入氣口，外面空氣會即時入返補充，盒內氣壓唔會下降，紙盒就唔會凹。
         </p>
       </div>
     </section>
@@ -170,6 +177,6 @@
   <noscript>
     <p class="noscript">請開啟 JavaScript，先可以逐步睇示範。</p>
   </noscript>
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>
