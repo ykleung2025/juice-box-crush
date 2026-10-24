@@ -9,7 +9,8 @@
   const NS = "http://www.w3.org/2000/svg";
   const COL_IN = "#087a4e";
   const COL_OUT = "#1565c0";
-  const LAST = 6;
+  const LAST = 7;
+  const RECAP = 6;
   // Outside air pressure does not change, so outside arrows stay this length.
   const OUT_LEN = 42;
   const COLS = 8;
@@ -58,6 +59,7 @@
       extras: 0,
       crush: 0,
       inside: 1,
+      gap: 0,
     },
     {
       title: "兩邊差不多大",
@@ -73,6 +75,7 @@
       extras: 0,
       crush: 0,
       inside: 1,
+      gap: 0,
     },
     {
       title: "吸走分子",
@@ -88,6 +91,7 @@
       extras: 0,
       crush: 0,
       inside: 0.78,
+      gap: 0,
     },
     {
       title: "盒內氣壓下降",
@@ -103,6 +107,7 @@
       extras: 0,
       crush: 0,
       inside: 0.32,
+      gap: 0,
     },
     {
       title: "認識大氣壓力",
@@ -118,6 +123,7 @@
       extras: 1,
       crush: 0,
       inside: 0.28,
+      gap: 0,
     },
     {
       title: "紙盒凹入去",
@@ -133,13 +139,14 @@
       extras: 1,
       crush: 1,
       inside: 0.28,
+      gap: 0,
     },
     {
       title: "重溫一次",
-      caption: "分子變少，盒內氣壓降低，盒外大氣壓力就把紙盒壓凹。係外面推入來，唔係真空吸住。",
+      caption: "分子變少，盒內氣壓降低，盒外氣壓就把紙盒壓凹。係外面推入來，唔係真空吸住。",
       legend: "藍色箭嘴：大氣壓力，向紙盒內推。綠色箭嘴：盒內向外推。",
       meter: "壓力差把紙盒壓凹。",
-      next: "再睇一次",
+      next: "如果有縫隙會點？",
       mask: MASK_SIP2,
       juice: 2,
       arrowIn: 16,
@@ -148,6 +155,23 @@
       extras: 1,
       crush: 1,
       inside: 0.28,
+      gap: 0,
+    },
+    {
+      title: "有縫隙／入氣口",
+      caption: "如果飲管同紙盒之間縫隙好大，或者有入氣口，外面嘅空氣會即時由縫隙／入氣口入返補充。盒內氣壓唔會下降，紙盒就唔會凹。對比密封情況：密封先至會凹。",
+      legend: "縫隙／入氣口：外面空氣入返補充。",
+      meter: "兩邊氣壓相同，紙盒唔凹。",
+      next: "再睇一次",
+      mask: MASK_ALL,
+      juice: 2,
+      arrowIn: OUT_LEN,
+      arrowOut: OUT_LEN,
+      arrows: 1,
+      extras: 0,
+      crush: 0,
+      inside: 1,
+      gap: 1,
     },
   ];
 
@@ -161,6 +185,7 @@
     extras: 0,
     crush: 0,
     inside: 1,
+    gap: 0,
   };
 
   let current = 0;
@@ -186,7 +211,12 @@
     molecules: $("molecules"),
     arrows: $("arrows"),
     outside: $("outside-air"),
+    gapVisual: $("gap-visual"),
+    gapHole: $("gapHole"),
+    gapRim: $("gapRim"),
+    gapArrows: $("gap-arrows"),
   };
+  const gapArrowNodes = [];
 
   function geom(crush) {
     const bow = 58 * crush;
@@ -304,6 +334,21 @@
       "points",
       `${x2},${y2} ${bx + px * hw},${by + py * hw} ${bx - px * hw},${by - py * hw}`
     );
+  }
+
+  function setGapArrow(index, spec) {
+    const group = gapArrowNodes[index];
+    if (!group) return;
+    setArrow(group, {
+      x1: spec.x1,
+      y1: spec.y1,
+      x2: spec.x2,
+      y2: spec.y2,
+      color: COL_OUT,
+      w: 5,
+      // Parent #gap-visual already fades with view.gap
+      op: view.gap > 0.05 ? 1 : 0,
+    });
   }
 
   function arrowToward(x, y, g, len) {
@@ -445,6 +490,23 @@
     );
     placeTag($("tag-dent"), leftDent - 18, fDent + 28, view.crush > 0.55, "end");
 
+    const gapX = g.cx + 6;
+    const gapY = g.t + 6;
+    const showGap = view.gap > 0.05;
+    if (sceneEls.gapVisual) {
+      sceneEls.gapVisual.setAttribute("opacity", String(Math.min(1, view.gap)));
+      sceneEls.gapHole.setAttribute("cx", gapX);
+      sceneEls.gapHole.setAttribute("cy", gapY);
+      sceneEls.gapRim.setAttribute("cx", gapX);
+      sceneEls.gapRim.setAttribute("cy", gapY);
+      // Short arrows: air flowing into the gap from above-left and above-right
+      const a1 = { x1: gapX - 28, y1: gapY - 34, x2: gapX - 8, y2: gapY - 8 };
+      const a2 = { x1: gapX + 28, y1: gapY - 34, x2: gapX + 8, y2: gapY - 8 };
+      setGapArrow(0, a1);
+      setGapArrow(1, a2);
+    }
+    placeTag($("tag-gap"), gapX + 78, gapY - 28, showGap);
+
     const showMol = current === 0 && molecules[COLS - 1];
     if (showMol) {
       const tip = slots[COLS - 1];
@@ -467,7 +529,8 @@
     document.body.dataset.step = String(current + 1);
     document.body.dataset.inside = view.inside.toFixed(2);
     document.body.dataset.crush = view.crush.toFixed(2);
-    document.body.dataset.atmo = current >= 4 ? "1" : "0";
+    document.body.dataset.gap = view.gap.toFixed(2);
+    document.body.dataset.atmo = current >= 4 && current <= RECAP ? "1" : "0";
     document.body.dataset.arrows = view.arrows.toFixed(2);
     document.body.dataset.busy = busy ? "1" : "0";
   }
@@ -488,7 +551,7 @@
     molecules.forEach((m, i) => {
       const dot = $("dotbank").children[i];
       if (!dot) return;
-      dot.className = `mini ${m.flying ? "leaving" : m.present ? "on" : "off"}`;
+      dot.className = `mini ${m.flying ? (m.present ? "leaving" : "entering") : m.present ? "on" : "off"}`;
     });
     document.body.dataset.molecules = String(n);
   }
@@ -497,6 +560,12 @@
     const el = $("legend");
     if (current === 0) {
       el.innerHTML = "小圓點代表空氣分子。";
+      return;
+    }
+    if (current === LAST) {
+      el.innerHTML =
+        `<span class="key-item"><i class="swatch out"></i>縫隙／入氣口：外面空氣入返</span>` +
+        `<span class="same-note">兩邊氣壓相同，紙盒唔凹</span>`;
       return;
     }
     const blue = current >= 4 ? "藍色向內推，就係大氣壓力" : "藍色向內推（盒外）";
@@ -509,15 +578,16 @@
 
   function updateChrome() {
     const step = STEPS[current];
-    $("step-badge").textContent = `第 ${current + 1} 步 / 共 7 步`;
-    $("sr-step").textContent = `第 ${current + 1} 步，共 7 步。`;
+    $("step-badge").textContent = `第 ${current + 1} 步 / 共 8 步`;
+    $("sr-step").textContent = `第 ${current + 1} 步，共 8 步。`;
     $("caption-title").textContent = step.title;
     $("caption-body").textContent = step.caption;
     renderLegend();
     $("meter-note").textContent = step.meter;
-    $("recap").hidden = current !== LAST;
+    $("recap").hidden = current !== RECAP;
     const banner = $("atmo-banner");
-    const showAtmo = current >= 4;
+    // Steps 5–7 (indices 4–6) show the atmospheric-pressure banner; gap contrast step does not.
+    const showAtmo = current >= 4 && current <= RECAP;
     if (showAtmo && banner.hidden) {
       banner.hidden = false;
       banner.classList.remove("pop");
@@ -615,16 +685,24 @@
     return points[points.length - 1];
   }
 
-  function floatDelta(n) {
+  function floatDelta(n, kind) {
     if (reduced) return;
-    const path = sceneEls.straw;
-    const len = path.getTotalLength();
-    const tip = path.getPointAtLength(Math.max(0, len - 8));
     const el = document.createElement("div");
-    el.className = "floater";
-    el.textContent = `走咗 ${n} 個`;
-    el.style.left = `${(100 * tip.x) / VB_W}%`;
-    el.style.top = `${(100 * tip.y) / VB_H}%`;
+    el.className = "floater" + (kind === "in" ? " in" : "");
+    el.textContent = kind === "in" ? `入返 ${n} 個` : `走咗 ${n} 個`;
+    if (kind === "in") {
+      const g = geom(view.crush);
+      const gx = g.cx + 6;
+      const gy = g.t - 8;
+      el.style.left = `${(100 * gx) / VB_W}%`;
+      el.style.top = `${(100 * gy) / VB_H}%`;
+    } else {
+      const path = sceneEls.straw;
+      const len = path.getTotalLength();
+      const tip = path.getPointAtLength(Math.max(0, len - 8));
+      el.style.left = `${(100 * tip.x) / VB_W}%`;
+      el.style.top = `${(100 * tip.y) / VB_H}%`;
+    }
     $("svg-wrap").appendChild(el);
     setTimeout(() => el.remove(), 1000);
   }
@@ -686,6 +764,56 @@
     await juiceAnim;
   }
 
+  async function flyInOne(m, pts, delay, token) {
+    const alive = await sleep(delay, token);
+    if (!alive) return;
+    m.flying = true;
+    m.present = false;
+    m.opacity = 1;
+    updateCount();
+    const poly = [{ x: m.x, y: m.y }, ...pts];
+    await tween(740, (e) => {
+      const pos = along(poly, e);
+      m.x = pos.x;
+      m.y = pos.y;
+      m.opacity = e < 0.12 ? e / 0.12 : 1;
+      m.el.setAttribute("cx", m.x);
+      m.el.setAttribute("cy", m.y);
+      m.el.setAttribute("opacity", m.opacity);
+    }, token);
+    if (token !== runId) return;
+    m.present = true;
+    m.flying = false;
+    m.opacity = 1;
+    m.el.setAttribute("opacity", "1");
+    updateCount();
+  }
+
+  async function flyIn(list, token) {
+    const gNow = geom(view.crush);
+    const gEnd = geom(0);
+    const slots = slotsFor(gEnd);
+    const gapOutsideY = gNow.t - 40;
+    const gapMouth = { x: gNow.cx + 6, y: gNow.t + 14 };
+    floatDelta(list.length, "in");
+    await Promise.all(
+      list.map((m, idx) => {
+        const dest = slots[m.i];
+        const spread = ((idx % 5) - 2) * 14;
+        m.x = gapMouth.x + spread;
+        m.y = gapOutsideY - (idx % 3) * 8;
+        m.opacity = 1;
+        m.flying = true;
+        m.present = false;
+        m.el.setAttribute("cx", m.x);
+        m.el.setAttribute("cy", m.y);
+        m.el.setAttribute("opacity", "1");
+        const pts = [gapMouth, { x: dest.x, y: dest.y }];
+        return flyInOne(m, pts, idx * 45, token);
+      })
+    );
+  }
+
   function applyInstant(target) {
     Object.keys(view).forEach((k) => {
       if (k in target) view[k] = target[k];
@@ -701,6 +829,7 @@
 
   async function animateTo(target, token) {
     const leaving = molecules.filter((m, i) => m.present && !target.mask[i]);
+    const entering = molecules.filter((m, i) => !m.present && target.mask[i]);
     if (leaving.length) {
       await Promise.all([
         tweenValues(["juice"], target, 900, token),
@@ -708,7 +837,19 @@
       ]);
       if (token !== runId) return;
     }
-    const keys = ["arrowIn", "arrowOut", "arrows", "extras", "crush", "inside", "juice"];
+    if (entering.length) {
+      await Promise.all([
+        tweenValues(
+          ["juice", "crush", "inside", "arrowIn", "arrowOut", "arrows", "extras", "gap"],
+          target,
+          1000,
+          token
+        ),
+        flyIn(entering, token),
+      ]);
+      if (token !== runId) return;
+    }
+    const keys = ["arrowIn", "arrowOut", "arrows", "extras", "crush", "inside", "juice", "gap"];
     const need = keys.some((k) => Math.abs(view[k] - target[k]) > 0.01);
     if (need) {
       if (target.crush > view.crush + 0.4 && !reduced) {
@@ -763,6 +904,14 @@
     }
   }
 
+  function bootGapArrows() {
+    for (let i = 0; i < 2; i += 1) {
+      const node = makeArrowGroup();
+      sceneEls.gapArrows.appendChild(node);
+      gapArrowNodes.push(node);
+    }
+  }
+
   function bootOutside() {
     const spots = [
       [48, 188],
@@ -790,7 +939,7 @@
 
   function bootDots() {
     const wrap = $("dots");
-    for (let i = 0; i < 7; i += 1) {
+    for (let i = 0; i < 8; i += 1) {
       wrap.appendChild(document.createElement("span"));
     }
   }
@@ -835,12 +984,13 @@
 
   bootMolecules();
   bootArrows();
+  bootGapArrows();
   bootOutside();
   bootDots();
 
   const params = new URLSearchParams(location.search);
   const queryStep = parseInt(params.get("step") || "1", 10);
-  const start = queryStep >= 1 && queryStep <= 7 ? queryStep - 1 : 0;
+  const start = queryStep >= 1 && queryStep <= 8 ? queryStep - 1 : 0;
   go(start, false);
   requestAnimationFrame(bob);
 
