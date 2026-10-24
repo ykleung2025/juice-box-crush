@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>點解果汁盒會凹入去？｜大氣壓力</title>
-  <meta name="description" content="逐步動畫：吸管吸走密封果汁盒入面嘅空氣分子，盒內氣壓下降，外面大氣壓力把紙盒壓凹。">
+  <title>點解果汁盒會凹入去？｜盒外空氣壓力</title>
+  <meta name="description" content="逐步動畫：密封果汁盒吸走空氣後會凹；有縫隙／入氣口就唔會。對比盒內空氣壓力同盒外空氣壓力。">
   <link rel="icon" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <div class="page">
@@ -15,122 +15,72 @@
       <h1>點解果汁盒會凹入去？</h1>
       <p class="goal">
         <span class="goal-label">學習目標</span>
-        用吸管吸走密封果汁盒入面嘅果汁同空氣，外面空氣入唔到。盒入面氣體分子變少，盒內氣壓下降；盒外氣壓冇變，就由外向內把紙盒壓凹。
+        用吸管吸走密封果汁盒入面嘅果汁同空氣，外面空氣入唔到。盒入面氣體分子變少，盒內空氣壓力下降；盒外空氣壓力冇變，就由外向內把紙盒壓凹。如果有縫隙／入氣口，空氣會入返補充，紙盒就唔會凹。
       </p>
     </header>
 
     <div class="layout">
       <section class="stage-card" aria-label="示範畫面">
         <div class="step-row">
-          <p class="step-badge" id="step-badge">第 1 步 / 共 8 步</p>
+          <p class="step-badge" id="step-badge">第 1 步 / 共 7 步</p>
         </div>
         <p class="atmo-banner" id="atmo-banner" hidden>
-          <strong>大氣壓力</strong>
+          <strong>盒外空氣壓力</strong>
           <span>盒外向內推嘅力</span>
         </p>
-        <div class="svg-wrap" id="svg-wrap">
-          <svg id="scene" viewBox="0 0 700 480" aria-hidden="true">
-            <defs>
-              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#b7e6fb"/>
-                <stop offset="55%" stop-color="#e7f6ff"/>
-                <stop offset="100%" stop-color="#f4fbff"/>
-              </linearGradient>
-              <linearGradient id="juiceGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffd56a"/>
-                <stop offset="100%" stop-color="#ff8c00"/>
-              </linearGradient>
-              <filter id="boxShadow" x="-30%" y="-30%" width="160%" height="160%">
-                <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#5d8ea3" flood-opacity="0.28"/>
-              </filter>
-              <clipPath id="boxClip">
-                <path id="boxClipPath"/>
-              </clipPath>
-            </defs>
-
-            <rect width="700" height="480" fill="url(#skyGrad)"/>
-            <g fill="#ffffff" opacity="0.9">
-              <ellipse cx="118" cy="58" rx="42" ry="16"/>
-              <ellipse cx="150" cy="52" rx="26" ry="14"/>
-              <ellipse cx="78" cy="62" rx="22" ry="12"/>
-              <ellipse cx="560" cy="42" rx="36" ry="14"/>
-              <ellipse cx="592" cy="38" rx="22" ry="12"/>
-            </g>
-            <circle cx="40" cy="36" r="16" fill="#ffe08a"/>
-            <circle cx="40" cy="36" r="26" fill="#ffe08a" opacity="0.35"/>
-
-            <g id="outside-air"></g>
-
-            <rect x="0" y="448" width="700" height="32" fill="#efd2a4"/>
-            <rect x="0" y="448" width="700" height="7" fill="#f8e6c8"/>
-            <rect x="0" y="474" width="700" height="6" fill="#e2c091"/>
-
-            <ellipse id="groundShadow" cx="350" cy="446" rx="120" ry="10" fill="#c9a57a" opacity="0.35"/>
-
-            <path id="boxFill" fill="#e5f6fd" filter="url(#boxShadow)"/>
-            <g clip-path="url(#boxClip)">
-              <rect id="juice" fill="url(#juiceGrad)"/>
-              <ellipse id="juiceShine" fill="#fff" opacity="0.45"/>
-            </g>
-            <path id="boxRim" fill="none" stroke="#f6e7cb" stroke-width="22" stroke-linejoin="round" stroke-linecap="round"/>
-            <path id="boxEdge" fill="none" stroke="#e0c392" stroke-width="3.5" stroke-linejoin="round"/>
-            <path id="wrinkles" fill="none" stroke="#c9843a" stroke-width="3" stroke-linecap="round" opacity="0"/>
-
-            <g id="orange" aria-hidden="true">
-              <rect x="-30" y="-30" width="60" height="60" rx="16" fill="#ffffff" opacity="0.94"/>
-              <circle cx="0" cy="4" r="16" fill="#ff9a1f" stroke="#e36d00" stroke-width="2"/>
-              <ellipse cx="-5" cy="2" rx="4" ry="6" fill="#fff" opacity="0.35"/>
-              <ellipse cx="0" cy="-14" rx="5" ry="7" fill="#2f9e4f"/>
-              <rect x="-1.5" y="-12" width="3" height="6" rx="1" fill="#2a7a3d"/>
-            </g>
-
-            <path id="straw" fill="none" stroke="#f7fbfe" stroke-width="22" stroke-linecap="round"/>
-            <path id="strawStripe" fill="none" stroke="#7ec8ea" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 14"/>
-            <path id="strawEdge" fill="none" stroke="#d5e2ea" stroke-width="22" stroke-linecap="round" opacity="0"/>
-            <path id="strawJuice" fill="none" stroke="#ff9f1c" stroke-width="12" stroke-linecap="round" opacity="0"/>
-
-            <g id="gap-visual" opacity="0">
-              <ellipse id="gapRim" cx="356" cy="122" rx="18" ry="11" fill="none" stroke="#c9843a" stroke-width="3.5"/>
-              <ellipse id="gapHole" cx="356" cy="122" rx="12" ry="7.5" fill="#8ec5e0" stroke="#1565c0" stroke-width="2"/>
-              <g id="gap-arrows"></g>
-            </g>
-
-            <g id="molecules"></g>
-            <g id="arrows"></g>
-            <line id="leader" stroke="#1d6ea5" stroke-width="3" stroke-linecap="round" opacity="0"/>
-          </svg>
-
-          <div class="overlay" id="overlay">
-            <p class="tag in" id="tag-in">盒內</p>
-            <p class="tag out" id="tag-out">盒外</p>
-            <p class="tag mol" id="tag-mol" hidden>空氣分子</p>
-            <p class="tag dir-out" id="tag-dir-out" hidden>向外</p>
-            <p class="tag dir-in" id="tag-dir-in" hidden>向內</p>
-            <p class="tag same" id="tag-same" hidden>氣壓相同</p>
-            <p class="tag dent" id="tag-dent" hidden>凹入</p>
-            <p class="tag gap" id="tag-gap" hidden>縫隙／入氣口</p>
+        <div class="compare-labels" id="compare-labels" hidden>
+          <p class="compare-label sealed">密封</p>
+          <p class="compare-label open">唔密封（縫隙／入氣口）</p>
+        </div>
+        <div class="scenes" id="scenes">
+          <div class="scene-panel" id="panel-sealed" data-role="sealed">
+            <div class="svg-wrap" id="wrap-sealed">
+              <!-- scene filled by app.js -->
+            </div>
+          </div>
+          <div class="scene-panel" id="panel-open" data-role="open" hidden>
+            <div class="svg-wrap" id="wrap-open">
+              <!-- scene filled by app.js -->
+            </div>
           </div>
         </div>
       </section>
 
       <aside class="side" aria-label="氣壓同分子">
-        <div class="panel">
-          <p class="panel-title">盒內分子</p>
-          <p class="count" id="mol-count">48</p>
-          <div class="dotbank" id="dotbank"></div>
+        <div class="panel" id="mol-panel">
+          <p class="panel-title" id="mol-panel-title">盒內分子</p>
+          <div class="mol-dual" id="mol-dual">
+            <div class="mol-col" id="mol-col-sealed">
+              <p class="mol-col-label" id="mol-label-sealed" hidden>密封</p>
+              <p class="count" id="mol-count-sealed">48</p>
+              <div class="dotbank" id="dotbank-sealed"></div>
+            </div>
+            <div class="mol-col" id="mol-col-open" hidden>
+              <p class="mol-col-label">唔密封</p>
+              <p class="count" id="mol-count-open">48</p>
+              <div class="dotbank" id="dotbank-open"></div>
+            </div>
+          </div>
         </div>
         <div class="panel">
           <p class="panel-title">氣壓比較</p>
-          <div class="meter-row">
-            <div class="vmeter">
-              <p class="meter-name" id="name-in">盒內氣壓</p>
+          <div class="meter-row" id="meter-row">
+            <div class="vmeter" id="meter-in-sealed">
+              <p class="meter-name" id="name-in-sealed">盒內空氣壓力</p>
               <div class="meter-track" aria-hidden="true">
-                <div class="meter-fill in" id="fill-in"></div>
+                <div class="meter-fill in" id="fill-in-sealed"></div>
               </div>
-              <p class="meter-value in" id="val-in">高</p>
+              <p class="meter-value in" id="val-in-sealed">高</p>
             </div>
-            <div class="vmeter">
-              <p class="meter-name" id="name-out">盒外氣壓</p>
+            <div class="vmeter" id="meter-in-open" hidden>
+              <p class="meter-name" id="name-in-open">唔密封 · 盒內</p>
+              <div class="meter-track" aria-hidden="true">
+                <div class="meter-fill in" id="fill-in-open"></div>
+              </div>
+              <p class="meter-value in" id="val-in-open">高</p>
+            </div>
+            <div class="vmeter" id="meter-out">
+              <p class="meter-name" id="name-out">盒外空氣壓力</p>
               <div class="meter-track" aria-hidden="true">
                 <div class="meter-fill out" id="fill-out"></div>
               </div>
@@ -148,11 +98,24 @@
       <div class="legend" id="legend"></div>
       <p id="caption-body"></p>
       <div class="recap" id="recap" hidden>
-        <ol class="chain">
-          <li><span>1</span>分子變少</li>
-          <li><span>2</span>盒內氣壓降低</li>
-          <li><span>3</span>盒外氣壓把紙盒壓凹</li>
-        </ol>
+        <div class="recap-grid">
+          <div class="recap-col sealed">
+            <p class="recap-heading">密封</p>
+            <ol class="chain">
+              <li><span>1</span>分子變少</li>
+              <li><span>2</span>盒內空氣壓力降低</li>
+              <li><span>3</span>盒外空氣壓力把紙盒壓凹</li>
+            </ol>
+          </div>
+          <div class="recap-col open">
+            <p class="recap-heading">唔密封</p>
+            <ol class="chain">
+              <li><span>1</span>空氣由縫隙入返</li>
+              <li><span>2</span>盒內空氣壓力唔降</li>
+              <li><span>3</span>紙盒唔凹</li>
+            </ol>
+          </div>
+        </div>
         <p class="note">
           <svg class="note-icon" viewBox="0 0 48 48" aria-hidden="true">
             <rect x="8" y="10" width="20" height="28" rx="2" fill="#fff" stroke="#e0c48a" stroke-width="2"/>
@@ -160,7 +123,7 @@
             <path d="M30 18h12" fill="none" stroke="#0d47a1" stroke-width="2.4" stroke-linecap="round"/>
             <path d="M36 13l7 5-7 5" fill="none" stroke="#0d47a1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          如果飲管同紙盒之間縫隙好大，或者有入氣口，外面空氣會即時入返補充，盒內氣壓唔會下降，紙盒就唔會凹。
+          密封先至會凹。有縫隙／入氣口時，外面空氣即時入返補充，盒內空氣壓力唔會下降。
         </p>
       </div>
     </section>
@@ -174,9 +137,92 @@
     </div>
   </div>
 
+  <template id="scene-template">
+    <svg class="scene" viewBox="0 0 700 480" aria-hidden="true">
+      <defs>
+        <linearGradient class="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b7e6fb"/>
+          <stop offset="55%" stop-color="#e7f6ff"/>
+          <stop offset="100%" stop-color="#f4fbff"/>
+        </linearGradient>
+        <linearGradient class="juiceGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffd56a"/>
+          <stop offset="100%" stop-color="#ff8c00"/>
+        </linearGradient>
+        <filter class="boxShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#5d8ea3" flood-opacity="0.28"/>
+        </filter>
+        <clipPath class="boxClip">
+          <path class="boxClipPath"/>
+        </clipPath>
+      </defs>
+
+      <rect width="700" height="480" class="skyFill"/>
+      <g fill="#ffffff" opacity="0.9">
+        <ellipse cx="118" cy="58" rx="42" ry="16"/>
+        <ellipse cx="150" cy="52" rx="26" ry="14"/>
+        <ellipse cx="78" cy="62" rx="22" ry="12"/>
+        <ellipse cx="560" cy="42" rx="36" ry="14"/>
+        <ellipse cx="592" cy="38" rx="22" ry="12"/>
+      </g>
+      <circle cx="40" cy="36" r="16" fill="#ffe08a"/>
+      <circle cx="40" cy="36" r="26" fill="#ffe08a" opacity="0.35"/>
+
+      <g class="outside-air"></g>
+
+      <rect x="0" y="448" width="700" height="32" fill="#efd2a4"/>
+      <rect x="0" y="448" width="700" height="7" fill="#f8e6c8"/>
+      <rect x="0" y="474" width="700" height="6" fill="#e2c091"/>
+
+      <ellipse class="groundShadow" cx="350" cy="446" rx="120" ry="10" fill="#c9a57a" opacity="0.35"/>
+
+      <path class="boxFill" fill="#e5f6fd"/>
+      <g class="juiceClip">
+        <rect class="juice"/>
+        <ellipse class="juiceShine" fill="#fff" opacity="0.45"/>
+      </g>
+      <path class="boxRim" fill="none" stroke="#f6e7cb" stroke-width="22" stroke-linejoin="round" stroke-linecap="round"/>
+      <path class="boxEdge" fill="none" stroke="#e0c392" stroke-width="3.5" stroke-linejoin="round"/>
+      <path class="wrinkles" fill="none" stroke="#c9843a" stroke-width="3" stroke-linecap="round" opacity="0"/>
+
+      <g class="orange" aria-hidden="true">
+        <rect x="-30" y="-30" width="60" height="60" rx="16" fill="#ffffff" opacity="0.94"/>
+        <circle cx="0" cy="4" r="16" fill="#ff9a1f" stroke="#e36d00" stroke-width="2"/>
+        <ellipse cx="-5" cy="2" rx="4" ry="6" fill="#fff" opacity="0.35"/>
+        <ellipse cx="0" cy="-14" rx="5" ry="7" fill="#2f9e4f"/>
+        <rect x="-1.5" y="-12" width="3" height="6" rx="1" fill="#2a7a3d"/>
+      </g>
+
+      <path class="straw" fill="none" stroke="#f7fbfe" stroke-width="22" stroke-linecap="round"/>
+      <path class="strawStripe" fill="none" stroke="#7ec8ea" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 14"/>
+      <path class="strawEdge" fill="none" stroke="#d5e2ea" stroke-width="22" stroke-linecap="round" opacity="0"/>
+      <path class="strawJuice" fill="none" stroke="#ff9f1c" stroke-width="12" stroke-linecap="round" opacity="0"/>
+
+      <g class="gap-visual" opacity="0">
+        <ellipse class="gapRim" cx="356" cy="122" rx="18" ry="11" fill="none" stroke="#c9843a" stroke-width="3.5"/>
+        <ellipse class="gapHole" cx="356" cy="122" rx="12" ry="7.5" fill="#8ec5e0" stroke="#1565c0" stroke-width="2"/>
+        <g class="gap-arrows"></g>
+      </g>
+
+      <g class="molecules"></g>
+      <g class="arrows"></g>
+      <line class="leader" stroke="#1d6ea5" stroke-width="3" stroke-linecap="round" opacity="0"/>
+    </svg>
+    <div class="overlay">
+      <p class="tag in tag-in">盒內</p>
+      <p class="tag out tag-out">盒外</p>
+      <p class="tag mol tag-mol" hidden>空氣分子</p>
+      <p class="tag dir-out tag-dir-out" hidden>向外</p>
+      <p class="tag dir-in tag-dir-in" hidden>向內</p>
+      <p class="tag same tag-same" hidden>氣壓相同</p>
+      <p class="tag dent tag-dent" hidden>凹入</p>
+      <p class="tag gap tag-gap" hidden>縫隙／入氣口</p>
+    </div>
+  </template>
+
   <noscript>
     <p class="noscript">請開啟 JavaScript，先可以逐步睇示範。</p>
   </noscript>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
